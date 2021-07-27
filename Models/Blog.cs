@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -38,5 +39,11 @@ namespace TheBlogProject.Models
 
         [NotMapped]
         public IFormFile Image { get; set; }
+
+        // Navigation Properties
+
+        public virtual IdentityUser Author { get; set; }
+
+        public virtual ICollection<Post> Posts { get; set; } = new HashSet<Post>();
     }
 }

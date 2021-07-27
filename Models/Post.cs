@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using TheBlogProject.Enums;
 
 namespace TheBlogProject.Models
 {
@@ -36,7 +37,7 @@ namespace TheBlogProject.Models
         [Display(Name = "Updated on")]
         public DateTime? Updated { get; set; }
 
-        public bool IsReady { get; set; }
+        public ReadyStatus ReadyStatus { get; set; }
 
         public string Slug { get; set; }
 

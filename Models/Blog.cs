@@ -13,6 +13,7 @@ namespace TheBlogProject.Models
     {
         public int Id { get; set; }
 
+        [Display(Name= "Author")]
         public string AuthorId { get; set; }
 
         [Required]

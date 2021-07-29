@@ -13,22 +13,22 @@ namespace TheBlogProject.Models
     {
         public int Id { get; set; }
 
-        [Display(Name= "Author")]
+        [Display(Name = "Author")]
         public string AuthorId { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage ="The {0} must be between {2} and {1} characters long.",MinimumLength = 2)]
+        [StringLength(100, ErrorMessage = "The {0} must be between {2} and {1} characters long.", MinimumLength = 2)]
         public string Name { get; set; }
 
         [Required]
         [StringLength(500, ErrorMessage = "The {0} must be between {2} and {1} characters long.", MinimumLength = 2)]
         public string Description { get; set; }
 
-        [DataType(DataType.DateTime)]
+        [DataType(DataType.Date)]
         [Display(Name = "Created on ")]
         public DateTime Created { get; set; }
 
-        [DataType(DataType.DateTime)]
+        [DataType(DataType.Date)]
         [Display(Name = "Updated on ")]
         public DateTime? Updated { get; set; }
 

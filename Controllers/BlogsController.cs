@@ -37,6 +37,7 @@ namespace TheBlogProject.Controllers
             var blog = await _context.Blogs
                 .Include(b => b.Author)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (blog == null)
             {
                 return NotFound();

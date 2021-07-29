@@ -24,11 +24,11 @@ namespace TheBlogProject.Models
         [StringLength(500, ErrorMessage = "The {0} must be between {2} and {1} characters long.", MinimumLength = 2)]
         public string Description { get; set; }
 
-        [DataType(DataType.Date)]
+        [DataType(DataType.DateTime)]
         [Display(Name = "Created on ")]
         public DateTime Created { get; set; }
 
-        [DataType(DataType.Date)]
+        [DataType(DataType.DateTime)]
         [Display(Name = "Updated on ")]
         public DateTime? Updated { get; set; }
 

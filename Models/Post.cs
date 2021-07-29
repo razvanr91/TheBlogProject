@@ -14,6 +14,7 @@ namespace TheBlogProject.Models
     {
         public int Id { get; set; }
 
+        [Display(Name = "Blog Name")]
         public int BlogId { get; set; }
 
         public string AuthorId { get; set; }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,9 @@ namespace TheBlogProject.Services
 
         public async Task ManageDataASync()
         {
+            //Create the database from the migrations
+            await _context.Database.MigrateAsync();
+
             //Create roles
             await CreateRolesAsync();
 

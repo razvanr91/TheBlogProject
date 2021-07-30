@@ -26,6 +26,13 @@ namespace TheBlogProject.Services
 
         private async Task CreateRolesAsync()
         {
+            // Check if roles exist. If so, do nothing.
+            if(_context.Roles.Any())
+            {
+                return;
+            }
+
+            //Create roles
 
         }
 

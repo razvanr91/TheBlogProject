@@ -9,7 +9,7 @@ namespace TheBlogProject.Enums
     {
         Administrator,
         Moderator,
-        Authore,
+        Author,
         User
     }
 }

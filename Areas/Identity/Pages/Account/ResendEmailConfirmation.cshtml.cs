@@ -18,12 +18,12 @@ namespace TheBlogProject.Areas.Identity.Pages.Account
     public class ResendEmailConfirmationModel : PageModel
     {
         private readonly UserManager<BlogUser> _userManager;
-        private readonly IEmailSender _emailSender;
+        private readonly IBlogEmailSender _blogEmailSender;
 
-        public ResendEmailConfirmationModel(UserManager<BlogUser> userManager, IEmailSender emailSender)
+        public ResendEmailConfirmationModel(UserManager<BlogUser> userManager, IBlogEmailSender blogEmailSender)
         {
             _userManager = userManager;
-            _emailSender = emailSender;
+            _blogEmailSender = blogEmailSender;
         }
 
         [BindProperty]
@@ -62,7 +62,7 @@ namespace TheBlogProject.Areas.Identity.Pages.Account
                 pageHandler: null,
                 values: new { userId = userId, code = code },
                 protocol: Request.Scheme);
-            await _emailSender.SendEmailAsync(
+            await _blogEmailSender.SendEmailAsync(
                 Input.Email,
                 "Confirm your email",
                 $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");

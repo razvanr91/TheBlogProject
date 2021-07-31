@@ -23,18 +23,19 @@ namespace TheBlogProject.Areas.Identity.Pages.Account
         private readonly SignInManager<BlogUser> _signInManager;
         private readonly UserManager<BlogUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
-        private readonly IEmailSender _emailSender;
+        //private readonly IEmailSender _emailSender;
+        private readonly IBlogEmailSender _blogEmailSender;
 
         public RegisterModel(
             UserManager<BlogUser> userManager,
             SignInManager<BlogUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IBlogEmailSender blogEmailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
-            _emailSender = emailSender;
+            _blogEmailSender = blogEmailSender;
         }
 
         [BindProperty]
@@ -89,7 +90,7 @@ namespace TheBlogProject.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = user.Id, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                    await _blogEmailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)

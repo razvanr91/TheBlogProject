@@ -11,9 +11,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TheBlogProject.Areas.Identity.Pages.Account;
 using TheBlogProject.Data;
 using TheBlogProject.Models;
 using TheBlogProject.Services;
+using TheBlogProject.ViewModels;
 
 namespace TheBlogProject
 {
@@ -45,6 +47,11 @@ namespace TheBlogProject
 
             // Register custom DataService class
             services.AddScoped<DataService>();
+
+            // Register Mail Settings Service
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+
+            services.AddScoped<IBlogEmailSender, EmailService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

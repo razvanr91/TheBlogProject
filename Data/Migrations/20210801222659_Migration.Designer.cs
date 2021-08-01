@@ -10,8 +10,8 @@ using TheBlogProject.Data;
 namespace TheBlogProject.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210727123748_Initial")]
-    partial class Initial
+    [Migration("20210801222659_Migration")]
+    partial class Migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -16,6 +16,6 @@ namespace TheBlogProject.Services
 
         string ContentType(IFormFile file);
 
-        int Size();
+        int Size(IFormFile file);
     }
 }

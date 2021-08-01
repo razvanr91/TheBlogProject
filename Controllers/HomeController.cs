@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using TheBlogProject.Areas.Identity.Pages.Account;
 using TheBlogProject.Models;
+using TheBlogProject.ViewModels;
 
 namespace TheBlogProject.Controllers
 {
@@ -13,9 +15,12 @@ namespace TheBlogProject.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly IBlogEmailSender _blogEmailSender;
+
+        public HomeController(ILogger<HomeController> logger, IBlogEmailSender blogEmailSender)
         {
             _logger = logger;
+            _blogEmailSender = blogEmailSender;
         }
 
         public IActionResult Index()
@@ -37,7 +42,7 @@ namespace TheBlogProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Contact(ContactMe contactMe)
         {
-
+            
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

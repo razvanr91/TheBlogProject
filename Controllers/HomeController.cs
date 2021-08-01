@@ -42,7 +42,11 @@ namespace TheBlogProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Contact(ContactMe contactMe)
         {
-            
+            contactMe.Message = $"{contactMe.Message} <hr/> Email: {contactMe.Email}";
+
+            await _blogEmailSender.SendContactEmailAsync(contactMe.Email, contactMe.Name, contactMe.Subject, contactMe.Message);
+
+            return RedirectToAction("Index");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

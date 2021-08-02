@@ -42,13 +42,13 @@ namespace TheBlogProject.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
+            if ( !ModelState.IsValid )
             {
                 return Page();
             }
 
             var user = await _userManager.FindByEmailAsync(Input.Email);
-            if (user == null)
+            if ( user == null )
             {
                 ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
                 return Page();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -75,6 +76,8 @@ namespace TheBlogProject.Controllers
                 // Use image service to store the image
                 post.ImageData = await _imageService.EncodeImageAsync(post.Image);
                 post.ContentType = _imageService.ContentType(post.Image);
+                
+                
 
                 var slug = _slugService.UrlFriendly(post.Title);
 
@@ -122,7 +125,7 @@ namespace TheBlogProject.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,BlogId,Title,Abstract,Content,ReadyStatus,Image")] Post post)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,BlogId,Title,Abstract,Content,ReadyStatus")] Post post, IFormFile? newImage)
         {
             if ( id != post.Id )
             {
@@ -133,8 +136,27 @@ namespace TheBlogProject.Controllers
             {
                 try
                 {
-                    post.Updated = DateTime.Now;
-                    _context.Update(post);
+                    var editedPost = await _context.Posts.FindAsync(post.Id);
+                    editedPost.Updated = DateTime.Now;
+
+                    if(newImage is not null)
+                    {
+                        editedPost.ImageData = await _imageService.EncodeImageAsync(newImage);
+                        editedPost.ContentType = _imageService.ContentType(newImage);
+                    }
+
+                    if ( post.Title != editedPost.Title )
+                        editedPost.Title = post.Title;
+
+                    if ( post.Abstract != editedPost.Abstract )
+                        editedPost.Abstract = post.Abstract;
+
+                    if ( post.Content != editedPost.Content )
+                        editedPost.Content = post.Content;
+
+                    if ( post.ReadyStatus != editedPost.ReadyStatus )
+                        editedPost.ReadyStatus = post.ReadyStatus;
+
                     await _context.SaveChangesAsync();
                 }
                 catch ( DbUpdateConcurrencyException )

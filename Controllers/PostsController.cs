@@ -17,10 +17,13 @@ namespace TheBlogProject.Controllers
 
         private readonly ISlugService _slugService;
 
-        public PostsController(ApplicationDbContext context, ISlugService slugService)
+        private readonly IImageService _imageService;
+
+        public PostsController(ApplicationDbContext context, ISlugService slugService, IImageService imageService)
         {
             _context = context;
             _slugService = slugService;
+            _imageService = imageService;
         }
 
         // GET: Posts
@@ -68,6 +71,10 @@ namespace TheBlogProject.Controllers
             if ( ModelState.IsValid )
             {
                 post.Created = DateTime.Now;
+
+                // Use image service to store the image
+                post.ImageData = await _imageService.EncodeImageAsync(post.Image);
+                post.ContentType = _imageService.ContentType(post.Image);
 
                 var slug = _slugService.UrlFriendly(post.Title);
 

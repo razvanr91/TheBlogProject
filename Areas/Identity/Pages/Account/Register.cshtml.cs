@@ -1,19 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using TheBlogProject.Models;
+using TheBlogProject.Services;
 
 namespace TheBlogProject.Areas.Identity.Pages.Account
 {
@@ -23,19 +28,22 @@ namespace TheBlogProject.Areas.Identity.Pages.Account
         private readonly SignInManager<BlogUser> _signInManager;
         private readonly UserManager<BlogUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
-        //private readonly IEmailSender _emailSender;
+        private readonly IImageService _imageService;
         private readonly IBlogEmailSender _blogEmailSender;
+        private readonly IConfiguration _configuration;
 
         public RegisterModel(
             UserManager<BlogUser> userManager,
             SignInManager<BlogUser> signInManager,
             ILogger<RegisterModel> logger,
-            IBlogEmailSender blogEmailSender)
+            IBlogEmailSender blogEmailSender, IImageService imageService, IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _blogEmailSender = blogEmailSender;
+            _imageService = imageService;
+            _configuration = configuration;
         }
 
         [BindProperty]
@@ -62,6 +70,10 @@ namespace TheBlogProject.Areas.Identity.Pages.Account
             [Display(Name = "Email")]
             public string Email { get; set; }
 
+            [NotMapped]
+            [Display(Name = "Custom Image")]
+            public IFormFile ImageFile { get; set; }
+
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
@@ -77,18 +89,30 @@ namespace TheBlogProject.Areas.Identity.Pages.Account
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            ExternalLogins = ( await _signInManager.GetExternalAuthenticationSchemesAsync() ).ToList();
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
-            ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-            if (ModelState.IsValid)
+            ExternalLogins = ( await _signInManager.GetExternalAuthenticationSchemesAsync() ).ToList();
+            if ( ModelState.IsValid )
             {
-                var user = new BlogUser { UserName = Input.Email, Email = Input.Email, FirstName = Input.FirstName, LastName = Input.LastName };
+                var user = new BlogUser
+                {
+                    UserName = Input.Email,
+                    Email = Input.Email,
+                    FirstName = Input.FirstName,
+                    LastName = Input.LastName,
+                    ImageData = (await _imageService.EncodeImageAsync(Input.ImageFile)) ??
+                                await _imageService.EncodeImageAsync(_configuration["DefaultUserImage"]),
+                    ContentType = Input.ImageFile is null ?
+                                    Path.GetExtension(_configuration["DefaultUserImage"]) :
+                                    _imageService.ContentType(Input.ImageFile)
+                    
+                };
                 var result = await _userManager.CreateAsync(user, Input.Password);
-                if (result.Succeeded)
+                if ( result.Succeeded )
                 {
                     _logger.LogInformation("User created a new account with password.");
 
@@ -103,7 +127,7 @@ namespace TheBlogProject.Areas.Identity.Pages.Account
                     await _blogEmailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    if ( _userManager.Options.SignIn.RequireConfirmedAccount )
                     {
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
                     }
@@ -113,7 +137,7 @@ namespace TheBlogProject.Areas.Identity.Pages.Account
                         return LocalRedirect(returnUrl);
                     }
                 }
-                foreach (var error in result.Errors)
+                foreach ( var error in result.Errors )
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
